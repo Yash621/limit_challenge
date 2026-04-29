@@ -45,6 +45,10 @@ export default function SubmissionsPage() {
   const status = (searchParams.get('status') as SubmissionStatus | null) ?? '';
   const brokerId = searchParams.get('brokerId') ?? '';
   const companyQuery = searchParams.get('companySearch') ?? '';
+  const createdFrom = searchParams.get('createdFrom') ?? '';
+  const createdTo = searchParams.get('createdTo') ?? '';
+  const hasDocuments = searchParams.get('hasDocuments') ?? '';
+  const hasNotes = searchParams.get('hasNotes') ?? '';
   const page = Math.max(1, Number(searchParams.get('page') ?? 1) || 1);
 
   function updateParams(next: Record<string, string | undefined>) {
@@ -68,8 +72,12 @@ export default function SubmissionsPage() {
       brokerId: brokerId || undefined,
       companySearch: companyQuery || undefined,
       page,
+      createdFrom: createdFrom || undefined,
+      createdTo: createdTo || undefined,
+      hasDocuments: hasDocuments === '' ? undefined : hasDocuments === 'true',
+      hasNotes: hasNotes === '' ? undefined : hasNotes === 'true',
     }),
-    [status, brokerId, companyQuery, page],
+    [status, brokerId, companyQuery, page, createdFrom, createdTo, hasDocuments, hasNotes],
   );
 
   const submissionsQuery = useSubmissionsList(filters);
@@ -193,6 +201,75 @@ export default function SubmissionsPage() {
                 helperText="Sent as ?companySearch=..."
               />
             </Stack>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mt: 2 }}>
+              <TextField
+                type="date"
+                label="Created from"
+                value={createdFrom}
+                onChange={(event) =>
+                  updateParams({
+                    createdFrom: event.target.value || undefined,
+                    page: '1',
+                  })
+                }
+                fullWidth
+                slotProps={{ inputLabel: { shrink: true } }}
+              />
+              <TextField
+                type="date"
+                label="Created to"
+                value={createdTo}
+                onChange={(event) =>
+                  updateParams({
+                    createdTo: event.target.value || undefined,
+                    page: '1',
+                  })
+                }
+                fullWidth
+                slotProps={{ inputLabel: { shrink: true } }}
+              />
+              <TextField
+                select
+                label="Has documents"
+                value={hasDocuments}
+                onChange={(event) =>
+                  updateParams({
+                    hasDocuments: event.target.value || undefined,
+                    page: '1',
+                  })
+                }
+                fullWidth
+              >
+                <MenuItem value="">Any</MenuItem>
+                <MenuItem value="true">Yes</MenuItem>
+                <MenuItem value="false">No</MenuItem>
+              </TextField>
+              <TextField
+                select
+                label="Has notes"
+                value={hasNotes}
+                onChange={(event) =>
+                  updateParams({
+                    hasNotes: event.target.value || undefined,
+                    page: '1',
+                  })
+                }
+                fullWidth
+              >
+                <MenuItem value="">Any</MenuItem>
+                <MenuItem value="true">Yes</MenuItem>
+                <MenuItem value="false">No</MenuItem>
+              </TextField>
+            </Stack>
+            <Box display="flex" justifyContent="flex-end" sx={{ mt: 2 }}>
+              <Button
+                variant="text"
+                onClick={() => router.replace(pathname)}
+                disabled={searchParams.toString().length === 0}
+              >
+                Clear filters
+              </Button>
+            </Box>
           </CardContent>
         </Card>
 
