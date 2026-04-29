@@ -87,10 +87,9 @@ export default function SubmissionsPage() {
   const totalPages = Math.max(1, Math.ceil((submissionsQuery.data?.count ?? 0) / pageSize));
 
   function formatDate(value: string) {
-    return new Intl.DateTimeFormat(undefined, {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    }).format(new Date(value));
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
   }
 
   function statusLabel(value: SubmissionStatus) {

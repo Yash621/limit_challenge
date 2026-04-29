@@ -29,10 +29,9 @@ export default function SubmissionDetailPage() {
   const submission = detailQuery.data;
 
   function formatDate(value: string) {
-    return new Intl.DateTimeFormat(undefined, {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    }).format(new Date(value));
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
   }
 
   return (
